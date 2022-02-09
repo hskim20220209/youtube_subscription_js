@@ -1,0 +1,116 @@
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+  /**
+   * Sample JavaScript code for youtube.subscriptions.insert
+   * See instructions for running APIs Explorer code samples locally:
+   * https://developers.google.com/explorer-help/code-samples#javascript
+   */
+
+  function authenticate() {
+    return gapi.auth2.getAuthInstance()
+        .signIn({scope: "https://www.googleapis.com/auth/youtube.force-ssl"})
+        //.signIn({scope: "https://www.googleapis.com/auth/youtube.readonly"})
+        .then(function() { console.log("Sign-in successful"); },
+              function(err) { console.error("Error signing in", err); });
+  }
+  function loadClient() {
+    gapi.client.setApiKey("AIzaSyCKA--DXH8CXUYSCRxAsJHXAtYEfKMqnqw");
+    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function() { console.log("GAPI client loaded for API"); },
+              function(err) { console.error("Error loading GAPI client for API", err); });
+  }
+  // Make sure the client is loaded and sign-in is complete before calling this method.
+  function insert(channelId) {
+    return gapi.client.youtube.subscriptions.insert({
+      "part": [
+        "snippet"
+      ],
+      "resource": {
+        "snippet": {
+          "resourceId": {
+            "kind": "youtube#channel",
+            "channelId": channelId
+          }
+        }
+      }
+    })
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+
+              },
+              function(err) { console.error("insert error", err); });
+  }
+  function list() {
+    return gapi.client.youtube.subscriptions.list({
+      "part": [
+        "snippet"
+      ],
+      "maxResults": 50,
+      "mine": true
+    })
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+                var channels = response.result.items.map(function(obj) {
+                  return obj.snippet.resourceId.channelId;
+                });
+                
+                console.log(channels);
+              },
+              function(err) { console.error("list error", err); });
+  }
+
+  async function inertChannels () {
+    const channels = [
+      "UC_x5XG1OV2P6uZZ5FSM9Ttw",
+      "UCxp5f_uqnsHMHgCjZZYFO6A",
+      "UC7KMk_qFQhcLF-8uftqwB9Q",
+      "UChlgI3UHCOnwUGzWzbJ3H5w",
+      "UCcQTRi69dsVYHN3exePtZ1A",
+      "UCmZ19AIj_wcpwRcqG7p9L8g",
+      "UCkinYTS9IHqOEwR1Sze2JTw",
+      "UCGrAnVVgQY66l9XHIzPxQEw",
+      "UCEii9gXvnQGFY81s8c0JnvQ",
+      "UCgsgpELbaTiGjCHIjHVF8uQ",
+      "UCAoj1O_pb7N12tFtzwGu21w",
+      "UC__J0wvxgqq4kg3i5iTgkLQ",
+      "UCb8atzUH4XgQLK3e39VKMbg",
+      "UCQA89gPDjJ-1M1o9bwdGF-g",
+      "UC17vGuYeJ_4tCpnO2vI7Ubw",
+      "UCdkCZUpTKqkjm1lXHeP8hnw",
+      "UCdfhK0yIMjmhcQ3gP-qpXRw",
+      "UCs1omgoHHPENxs4b-fwMpPQ",
+      "UCbifFcHncE89RrKSm3HlNAg",
+      "UCZ-8O9WwagxNFj5Cc_TYfSw",
+      "UCxlv4aOnrRTXMRSL8bVJqEw",
+      "UCkBoDzncl64EZ-Ggh4g5pCw",
+      "UCiWcXU1zYrEONKQtNVGr_Jw",
+      "UCoEinoqCVw-rFnh_Fznc2Ig",
+      "UC6EVblMaNgsx5P9TuqlE9SQ",
+      "UCHy8o-_zR_vHqpPN4uNUvkg",
+      "UCnmwnH8tzKHX71WIHj8Iraw",
+      "UC_jBjNL4TZbVooqYONvlX4A",
+      "UC_E4WdwqOVC6rd23O6PVRjg",
+      "UC2oS-DyJumQVIrGFxxjgRBQ",
+      "UCO7EiTB_RaRaSAOn_E_HZmg",
+      "UCLF1hNfWMvgq4zvR5qzDWgg",
+      "UCW78wkSCCBpad3Yg3JZYy-A",
+      "UC79hJz6y1EEiIkwfHOuWC4w",
+      "UClNWGlNYhJKb3qqagXzR3JQ",
+      "UCnHfavZABe-QP17B-t3Pkew"
+  ]
+
+    for (const channel of channels) {
+      await insert(channel);
+      //console.log(contents);
+    }
+  }
+  
+  gapi.load("client:auth2", function() {
+    gapi.auth2.init({client_id: "662598231197-csjctihhe5j6id270qvks3pb768m771h.apps.googleusercontent.com"});
+  });
+</script>
+<button onclick="authenticate().then(loadClient)">authorize and load</button>
+<button onclick="inertChannels()">inertChannels</button>
+<button onclick="list()">list</button>
